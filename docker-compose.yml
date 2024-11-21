@@ -21,6 +21,20 @@
 # create you own docker environment file (docker/.env) with your own
 # unique random secure passwords and SECRET_KEY.
 # -----------------------------------------------------------------------
+
+x-host-name: &host-name ${HOST_NAME}
+x-http-proxy: &http-proxy ${HTTP_PROXY}
+x-https-proxy: &https-proxy ${HTTPS_PROXY}
+x-no-proxy: &no-proxy ${HOST_NAME},${HOST_NAME}.xuclh.nhs.uk,localhost,127.0.0.1
+x-network: &network
+  HOST_NAME: *host-name
+  HTTP_PROXY: *http-proxy
+  http_proxy: *http-proxy
+  HTTPS_PROXY: *https-proxy
+  https_proxy: *https-proxy
+  NO_PROXY: *no-proxy
+  no_proxy: *no-proxy
+
 x-superset-user: &superset-user root
 x-superset-depends-on: &superset-depends-on
   - db
@@ -41,6 +55,7 @@ x-common-build: &common-build
     - apache/superset-cache:3.10-slim-bookworm
   args:
     DEV_MODE: "true"
+    <<: *network
 
 services:
   nginx:
@@ -96,7 +111,10 @@ services:
 
   superset-websocket:
     container_name: superset_websocket
-    build: ./superset-websocket
+    build: 
+      context: ./superset-websocket
+      args:
+        <<: *network
     ports:
       - 8080:8080
     extra_hosts:
@@ -133,6 +151,8 @@ services:
       target: python-base
       cache_from:
         - apache/superset-cache:3.10-slim-bookworm
+      args:
+        <<: *network
     container_name: superset_checks
     command: ["/app/scripts/check-env.py"]
     env_file:
@@ -167,6 +187,7 @@ services:
         # and build it on startup while firing docker-frontend.sh in dev mode, where
         # it'll mount and watch local files and rebuild as you update them
         DEV_MODE: "true"
+        <<: *network
     environment:
       # set this to false if you have perf issues running the npm i; npm run dev in-docker
       # if you do so, you have to run this manually on the host, which should perform better!
