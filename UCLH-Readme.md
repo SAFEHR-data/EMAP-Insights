@@ -7,6 +7,8 @@ Create a _docker/.env-local_ file with the following keys:
 ```
 COMPOSE_PROJECT_NAME=EMAP-Insights
 
+HOST_NAME=<GAEXX>
+
 # Set this to a unique secure random value on production
 DATABASE_PASSWORD=superset
 
@@ -15,3 +17,10 @@ SUPERSET_LOAD_EXAMPLES=false
 # Make sure you set this to a unique secure random value on production
 # using something like `openssl rand -base64 42`
 SUPERSET_SECRET_KEY=TEST_NON_DEV_SECRET
+
+
+## Run
+
+```bash
+
+```

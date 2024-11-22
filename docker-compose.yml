@@ -154,7 +154,8 @@ services:
       args:
         <<: *network
     container_name: superset_checks
-    command: ["/app/scripts/check-env.py"]
+    # command: ["/app/scripts/check-env.py"] # Open Issue https://github.com/apache/superset/issues/30916
+    command: ["true"]
     env_file:
       - docker/.env # default
       - docker/.env-local # optional override
