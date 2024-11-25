@@ -15,6 +15,19 @@
 # limitations under the License.
 #
 
+x-host-name: &host-name ${HOST_NAME}
+x-http-proxy: &http-proxy ${HTTP_PROXY}
+x-https-proxy: &https-proxy ${HTTPS_PROXY}
+x-no-proxy: &no-proxy ${HOST_NAME},${HOST_NAME}.xuclh.nhs.uk,localhost,127.0.0.1
+x-network: &network
+  HOST_NAME: *host-name
+  HTTP_PROXY: *http-proxy
+  http_proxy: *http-proxy
+  HTTPS_PROXY: *https-proxy
+  https_proxy: *https-proxy
+  NO_PROXY: *no-proxy
+  no_proxy: *no-proxy
+
 # -----------------------------------------------------------------------
 # We don't support docker compose for production environments.
 # If you choose to use this type of deployment make sure to
@@ -40,10 +53,8 @@ services:
 
   db:
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
+      - docker/.env-local # optional override
     image: postgres:15
     container_name: superset_db
     restart: unless-stopped
@@ -53,10 +64,8 @@ services:
 
   superset:
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
+      - docker/.env-local # optional override
     image: *superset-image
     container_name: superset_app
     command: ["/app/docker/docker-bootstrap.sh", "app-gunicorn"]
@@ -72,10 +81,8 @@ services:
     container_name: superset_init
     command: ["/app/docker/docker-init.sh"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
+      - docker/.env-local # optional override
     depends_on: *superset-depends-on
     user: "root"
     volumes: *superset-volumes
@@ -87,10 +94,8 @@ services:
     container_name: superset_worker
     command: ["/app/docker/docker-bootstrap.sh", "worker"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
+      - docker/.env-local # optional override
     restart: unless-stopped
     depends_on: *superset-depends-on
     user: "root"
@@ -107,10 +112,8 @@ services:
     container_name: superset_worker_beat
     command: ["/app/docker/docker-bootstrap.sh", "beat"]
     env_file:
-      - path: docker/.env # default
-        required: true
-      - path: docker/.env-local # optional override
-        required: false
+      - docker/.env # default
+      - docker/.env-local # optional override
     restart: unless-stopped
     depends_on: *superset-depends-on
     user: "root"
