@@ -41,6 +41,8 @@ x-superset-volumes: &superset-volumes
   - ./superset-frontend:/app/superset-frontend
   - superset_home:/app/superset_home
   - ./tests:/app/tests
+  # https://github.com/apache/superset/issues/9748#issuecomment-2099107789
+  - ./data:/var/mydata
 
 x-common-build: &common-build
   context: .
@@ -49,6 +51,7 @@ x-common-build: &common-build
     - apache/superset-cache:3.10-slim-bookworm
   args:
     DEV_MODE: "true"
+    <<: *network
     INCLUDE_CHROMIUM: ${INCLUDE_CHROMIUM:-false}
     INCLUDE_FIREFOX: ${INCLUDE_FIREFOX:-false}
     BUILD_TRANSLATIONS: ${BUILD_TRANSLATIONS:-false}
@@ -112,7 +115,10 @@ services:
 
   superset-websocket:
     container_name: superset_websocket
-    build: ./superset-websocket
+    build: 
+      context: ./superset-websocket
+      args:
+         <<: *network
     ports:
       - 8080:8080
     extra_hosts:

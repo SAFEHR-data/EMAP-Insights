@@ -42,6 +42,8 @@ x-superset-volumes:
   &superset-volumes # /app/pythonpath_docker will be appended to the PYTHONPATH in the final container
   - ./docker:/app/docker
   - superset_home:/app/superset_home
+  # https://github.com/apache/superset/issues/9748#issuecomment-2099107789
+  - ./data:/var/mydata
 
 services:
   redis:
