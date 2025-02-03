@@ -29,6 +29,8 @@ x-superset-volumes: &superset-volumes
   - ./superset-frontend:/app/superset-frontend
   - superset_home:/app/superset_home
   - ./tests:/app/tests
+  # https://github.com/apache/superset/issues/9748#issuecomment-2099107789
+  - ./data:/var/data
 
 x-common-build: &common-build
   context: .

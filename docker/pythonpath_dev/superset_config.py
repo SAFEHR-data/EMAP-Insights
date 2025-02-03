@@ -29,6 +29,11 @@ from flask_caching.backends.filesystemcache import FileSystemCache
 
 logger = logging.getLogger()
 
+# Allow sqlite to be used 
+# via https://github.com/apache/superset/issues/9748
+# Superset configuration file
+PREVENT_UNSAFE_DB_CONNECTIONS=False
+
 ENABLE_PROXY_FIX = False
 WTF_CSRF_ENABLED = False
 TALISMAN_ENABLED = False
