@@ -44,6 +44,7 @@ x-superset-volumes:
   - superset_home:/app/superset_home
   # https://github.com/apache/superset/issues/9748#issuecomment-2099107789
   - ./data:/var/mydata
+  - ./dashboards:/var/dashboards
 
 services:
   redis:
