@@ -15,10 +15,10 @@
 # limitations under the License.
 #
 
-x-host-name: &host-name ${HOST_NAME}
+x-host-name: &host-name ${HOSTNAME}
 x-http-proxy: &http-proxy ${HTTP_PROXY}
 x-https-proxy: &https-proxy ${HTTPS_PROXY}
-x-no-proxy: &no-proxy ${HOST_NAME},${HOST_NAME}.xuclh.nhs.uk,localhost,127.0.0.1
+x-no-proxy: &no-proxy ${HOSTNAME}.xuclh.nhs.uk,localhost,127.0.0.1
 x-network: &network
   HOST_NAME: *host-name
   HTTP_PROXY: *http-proxy
@@ -43,7 +43,7 @@ x-superset-volumes:
   - ./docker:/app/docker
   - superset_home:/app/superset_home
   # https://github.com/apache/superset/issues/9748#issuecomment-2099107789
-  - ./data:/var/mydata
+  - ./data:/var/data
   - ./dashboards:/var/dashboards
 
 services:
@@ -58,9 +58,13 @@ services:
     env_file:
       - docker/.env # default
       - docker/.env-local # optional override
+    environment:
+      <<: *network
     image: postgres:15
     container_name: superset_db
     restart: unless-stopped
+    ports:
+      - 8089:5432
     volumes:
       - db_home:/var/lib/postgresql/data
       - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
@@ -69,6 +73,8 @@ services:
     env_file:
       - docker/.env # default
       - docker/.env-local # optional override
+    environment:
+      <<: *network
     image: *superset-image
     container_name: superset_app
     command: ["/app/docker/docker-bootstrap.sh", "app-gunicorn"]
@@ -87,6 +93,8 @@ services:
       - docker/.env # default
       - docker/.env-local # optional override
     depends_on: *superset-depends-on
+    environment:
+      <<: *network
     user: "root"
     volumes: *superset-volumes
     healthcheck:
